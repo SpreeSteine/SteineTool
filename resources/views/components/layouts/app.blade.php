@@ -24,9 +24,10 @@
 
             <flux:input variant="filled" placeholder="Search..." icon="magnifying-glass" />
 
-
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="home" href="{{ route('main') }}" :current="request()->routeIs('main')">Home</flux:navlist.item>
+                <flux:navlist.item icon="building-storefront" href="{{ route('inventory') }}" :current="request()->routeIs('inventory')">Inventory</flux:navlist.item>
+                <flux:navlist.item icon="" href="{{ route('storages') }}" :current="request()->routeIs('storages')">Lager</flux:navlist.item>
                 <flux:navlist.item icon="calculator" href="{{ route('tools.set-analyzer') }}" :current="request()->routeIs('tools.set-analyzer')">SetAnalyzer</flux:navlist.item>
             </flux:navlist>
 

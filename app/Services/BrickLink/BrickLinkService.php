@@ -2,17 +2,21 @@
 
 namespace App\Services\BrickLink;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class BrickLinkService
 {
     public function __construct(private BrickLinkApiClient $apiClient) {}
 
-    public function getInventory(): array
+    public function getInventory(): Collection
     {
-        return Cache::remember('bricklink_inventory', now()->addHour(), function () {
-            return $this->apiClient->request('GET', 'inventories')['data'] ?? [];
-        });
+        $inventory = $this->apiClient->request('GET', 'inventories');
+
+        return collect($inventory['data'] ?? []);
+//        return Cache::remember('bricklink_inventory', now()->addHour(), function () {
+//            return $this->apiClient->request('GET', 'inventories')['data'] ?? [];
+//        });
     }
 
     public function getPartPrice(string $itemId, string $type, int $colorId): ?float
@@ -30,8 +34,10 @@ class BrickLinkService
     /**
      * Fetches the parts list of a specific set.
      */
-    public function getSetParts(string $setNumber): mixed
+    public function getSetParts(string $setNumber): Collection
     {
-        return $this->apiClient->request('GET', "items/SET/{$setNumber}/subsets");
+        $data = $this->apiClient->request('GET', "items/SET/{$setNumber}/subsets");
+
+        return collect($data['data'] ?? []);
     }
 }

@@ -16,8 +16,12 @@ return new class extends Migration
             $table->string('set_number');
             $table->float('price');
             $table->integer('total_parts')->nullable();
-            $table->float('total_value')->nullable();
-            $table->float('pov_ratio')->nullable();
+            $table->float('total_value_min')->nullable();
+            $table->float('total_value_avg')->nullable();
+            $table->float('total_value_qty_avg')->nullable();
+            $table->float('pov_ratio_min')->nullable();
+            $table->float('pov_ratio_avg')->nullable();
+            $table->float('pov_ratio_qty_avg')->nullable();
             $table->integer('new_parts_count')->nullable();
             $table->float('new_parts_percentage')->nullable();
             $table->timestamps();

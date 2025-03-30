@@ -24,6 +24,7 @@
 
                     <flux:input
                         wire:model="price"
+                        type="number"
                         placeholder="" />
                 </flux:input.group>
 
@@ -44,8 +45,12 @@
                 <flux:column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection" wire:click="sort('status')">Status</flux:column>
                 <flux:column sortable :sorted="$sortBy === 'price'" :direction="$sortDirection" wire:click="sort('price')">Price</flux:column>
                 <flux:column sortable :sorted="$sortBy === 'total_parts'" :direction="$sortDirection" wire:click="sort('total_parts')">Total Lots</flux:column>
-                <flux:column sortable :sorted="$sortBy === 'total_value'" :direction="$sortDirection" wire:click="sort('total_value')">Total Value</flux:column>
-                <flux:column sortable :sorted="$sortBy === 'pov_ratio'" :direction="$sortDirection" wire:click="sort('pov_ratio')">POV Ratio</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'total_value_min'" :direction="$sortDirection" wire:click="sort('total_value_min')">Total Value Min</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'total_value_avg'" :direction="$sortDirection" wire:click="sort('total_value_avg')">Total Value Avg</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'total_value_qty_avg'" :direction="$sortDirection" wire:click="sort('total_value_qty_avg')">Total Value Qty Avg</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'pov_ratio_min'" :direction="$sortDirection" wire:click="sort('pov_ratio')">POV Ratio Min</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'pov_ratio_avg'" :direction="$sortDirection" wire:click="sort('pov_ratio')">POV Ratio Avg</flux:column>
+                <flux:column sortable :sorted="$sortBy === 'pov_ratio_qty_avg'" :direction="$sortDirection" wire:click="sort('pov_ratio')">POV Ratio Qty Avg</flux:column>
                 <flux:column sortable :sorted="$sortBy === 'new_parts_count'" :direction="$sortDirection" wire:click="sort('new_parts_count')">New Lots Count</flux:column>
                 <flux:column sortable :sorted="$sortBy === 'new_parts_percentage'" :direction="$sortDirection" wire:click="sort('new_parts_percentage')">New Lots %</flux:column>
             </flux:columns>
@@ -75,18 +80,53 @@
                         </flux:cell>
 
                         <flux:cell variant="strong">
-                            @unless ($set->total_value)
+                            @unless ($set->total_value_min)
                                 <flux:icon.loading class="size-5" />
                             @else
-                                {{ $set->total_value }}
+                                {{ round($set->total_value_min,2) }}
                             @endunless
                         </flux:cell>
 
                         <flux:cell variant="strong">
-                            @unless ($set->pov_ratio)
+                            @unless ($set->total_value_avg)
                                 <flux:icon.loading class="size-5" />
                             @else
-                                {{ $set->pov_ratio }}
+                                {{ round($set->total_value_avg,2) }}
+                            @endunless
+
+                        </flux:cell>
+
+                        <flux:cell variant="strong">
+                            @unless ($set->total_value_qty_avg)
+                                <flux:icon.loading class="size-5" />
+                            @else
+                                {{ round($set->total_value_qty_avg,2) }}
+                            @endunless
+
+                        </flux:cell>
+
+                        <flux:cell variant="strong">
+                            @unless ($set->pov_ratio_min)
+                                <flux:icon.loading class="size-5" />
+                            @else
+                                {{ round($set->pov_ratio_min,2) }}
+                            @endunless
+                        </flux:cell>
+
+                        <flux:cell variant="strong">
+                            @unless ($set->pov_ratio_avg)
+                                <flux:icon.loading class="size-5" />
+                            @else
+                                {{ round($set->pov_ratio_avg,2) }}
+                            @endunless
+
+                        </flux:cell>
+
+                        <flux:cell variant="strong">
+                            @unless ($set->pov_ratio_qty_avg)
+                                <flux:icon.loading class="size-5" />
+                            @else
+                                {{ round($set->pov_ratio_qty_avg,2) }}
                             @endunless
                         </flux:cell>
 
