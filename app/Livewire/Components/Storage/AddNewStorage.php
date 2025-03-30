@@ -10,8 +10,18 @@ use Livewire\Component;
 class AddNewStorage extends Component
 {
     public string $identifier = '';
-
     public array $units = [];
+
+    public function rules(): array
+    {
+        return [
+            'identifier' => 'required|unique:storages,identifier|max:255',
+            'units.*.identifier' => 'required|max:255',
+            'units.*.length' => 'required|numeric|min:0',
+            'units.*.width' => 'required|numeric|min:0',
+            'units.*.height' => 'required|numeric|min:0',
+        ];
+    }
 
     public function render()
     {
@@ -20,10 +30,8 @@ class AddNewStorage extends Component
 
     public function addUnit()
     {
-        // number format leading zero 01, 02, 03, ...
         $number = sprintf("%02d", count($this->units) + 1);
-
-        $beforeUnit = $this->units[count($this->units) - 1] ?? null;
+        $beforeUnit = end($this->units) ?: null;
 
         $this->units[] = [
             'identifier' => $this->identifier . '-' . $number,
@@ -36,21 +44,18 @@ class AddNewStorage extends Component
     public function removeUnit($index): void
     {
         unset($this->units[$index]);
-
         $this->units = array_values($this->units);
     }
 
     public function save()
     {
-        // Save the storage
-        $data = $this->validate([
-            'identifier' => 'required',
+        $this->validate();
+
+        $storage = Storage::create([
+            'identifier' => $this->identifier,
         ]);
 
-        $storage = Storage::create($data);
-
-        // create storage units
-        foreach ($this->units as $i => $unit) {
+        foreach ($this->units as $unit) {
             StorageUnit::create([
                 'storage_id' => $storage->id,
                 'identifier' => $unit['identifier'],
@@ -60,7 +65,7 @@ class AddNewStorage extends Component
             ]);
         }
 
-
+        $this->dispatch('refreshStorageList');
         Flux::modals()->close();
     }
 }

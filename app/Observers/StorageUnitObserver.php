@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Livewire\Pages\Inventory;
+use App\Models\Inventory;
 use App\Models\StorageUnit;
 
 class StorageUnitObserver
@@ -24,16 +24,34 @@ class StorageUnitObserver
         $model->capacity = $model->length * $model->width * $model->height;
 
         // get the items that are stored in this storage unit
-        $numberOfItems = \App\Models\Inventory::query()
-            ->where('remarks', $model->identifier)
+        $inventoryBuilder = Inventory::query()
+            ->where('remarks', $model->identifier);
+
+        $model->number_of_items = $inventoryBuilder
             ->sum('quantity');
 
-        $model->number_of_items = $numberOfItems;
+        $volumeOfItems = 0;
 
-        // capacity_percentage
+        $inventoryBuilder->each(function (Inventory $inventory) use (&$volumeOfItems) {
 
+            // get the item
+            $item = $inventory->item;
+
+            // calculate volume of the item
+            $itemVolume = $item->package_dim_x
+                * $item->package_dim_y
+                * $item->package_dim_z;
+
+            // calculate the used capacity
+            $volumeOfItems += $itemVolume * $inventory->quantity;
+        });
 
         // calculate the available capacity
-        $model->available_capacity = $model->capacity - $model->used_capacity;
+        $model->available_capacity = $model->capacity - $volumeOfItems;
+
+        // calculate the used capacity
+        $model->capacity_percentage = $model->capacity > 0
+            ? ($volumeOfItems / $model->capacity) * 100
+            : 0;
     }
 }

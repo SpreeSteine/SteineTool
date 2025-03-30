@@ -19,6 +19,9 @@ class Storages extends Component
     {
         return Storage::query()
             ->with('units') // Eager load the units relationship
+            ->withCount(['units as total_items' => function ($query) {
+                $query->select(\DB::raw('sum(number_of_items)'));
+            }]) // Calculate total items across all units
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(50);
     }
@@ -30,6 +33,16 @@ class Storages extends Component
         } else {
             $this->sortBy = $column;
             $this->sortDirection = 'asc';
+        }
+    }
+
+    public function deleteStorage($storageId)
+    {
+        $storage = Storage::find($storageId);
+        if ($storage) {
+            $storage->units()->delete(); // Delete all associated units
+            $storage->delete(); // Delete the storage
+            $this->dispatch('refreshStorageList'); // Refresh the list
         }
     }
 
